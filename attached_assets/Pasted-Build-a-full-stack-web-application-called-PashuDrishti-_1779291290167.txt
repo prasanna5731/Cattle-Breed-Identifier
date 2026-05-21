@@ -1,0 +1,251 @@
+Build a full-stack web application called "PashuDrishti" (पशु दृष्टि) — an AI-powered image-based breed recognition system for Indian cattle and buffaloes.
+
+---
+
+## TECH STACK
+- Frontend: HTML5, CSS3, Vanilla JS (no frameworks)
+- Backend: Node.js + Express
+- AI: Anthropic Claude API (claude-sonnet-4-20250514) with vision capabilities
+- No database needed (stateless)
+
+---
+
+## VISUAL DESIGN DIRECTION — "Earthy Futurism"
+A bold, nature-meets-technology aesthetic. NOT generic blue gradients.
+
+### Color Palette (CSS Variables):
+--bg-primary: #0D0F0A (deep soil black)
+--bg-card: #141810 (dark moss)
+--accent-gold: #C8961E (turmeric gold)
+--accent-green: #4A7C3F (paddy green)
+--accent-amber: #E8A030 (wheat amber)
+--text-primary: #F0EAD6 (cream white)
+--text-muted: #8A8070 (dry grass)
+--border-glow: rgba(200, 150, 30, 0.3)
+--glass: rgba(20, 24, 16, 0.7)
+
+### Typography:
+- Headings: Google Font "Playfair Display" (serif, elegant)
+- Body/UI: Google Font "DM Sans" (modern, readable)
+- Accent labels: Google Font "Cinzel" (classical, Indian-heritage feel)
+
+### Layout Style:
+- Dark theme throughout
+- Asymmetric hero layout (60/40 split)
+- Glassmorphism cards with gold border glow
+- Diagonal section dividers (CSS clip-path)
+- Animated scan-line overlay on upload zone
+- Floating particle background (CSS-only dots, subtle)
+- Hexagonal grid pattern as section background texture
+
+---
+
+## PAGES & SECTIONS
+
+### 1. HERO SECTION
+- Full-viewport height
+- Left: Large headline "Know Your Breed. Know Your Herd." in Playfair Display
+- Subtext: "AI-powered identification of 30+ Indian cattle & buffalo breeds"
+- Two CTAs: [Upload Image] (gold filled) and [Browse Breeds] (outlined)
+- Right: Rotating 3D-ish card showing sample breed images (CSS 3D transform carousel)
+- Animated background: subtle CSS particle dots (green/gold tiny circles floating)
+- Bottom: Marquee strip scrolling breed names in Devanagari + English
+
+### 2. UPLOAD / SCAN SECTION
+- Centered card with dashed glowing border (gold)
+- Drag & Drop zone with animated scan line sweeping top-to-bottom (CSS animation)
+- OR click to upload button
+- Show image preview inside a hexagonal clip-path frame on upload
+- "Analyze Breed" button with loading pulse animation
+- Accepts: JPG, PNG, WEBP up to 10MB
+
+### 3. RESULT DISPLAY SECTION (shown after analysis)
+- Slide up with animation
+- Left: Uploaded image in hexagonal frame
+- Right: 
+  - Breed name (large, gold, Cinzel font)
+  - Confidence score as animated arc progress bar
+  - Species tag (Cattle / Buffalo) as pill badge
+  - Origin state (e.g., "Gujarat", "Murshidabad")
+  - Key traits as icon+text chips: milk yield, body color, horn type, use (dairy/draft/dual)
+  - Conservation status badge (if endangered)
+- Below: Expandable "Full Breed Profile" accordion
+
+### 4. BREED GALLERY SECTION
+- Title: "India's Bovine Heritage"
+- Filter tabs: [All] [Cattle] [Buffalo] [Dairy] [Draft] [Dual Purpose] [Endangered]
+- CSS Grid: 3 columns desktop, 2 tablet, 1 mobile
+- Each card:
+  - Top: breed image placeholder (use a solid colored gradient with breed initial)
+  - Breed name in Cinzel font
+  - State origin tag
+  - 3 trait pills
+  - Hover: card lifts, gold glow border, quick-stats overlay slides up
+
+### 5. HOW IT WORKS SECTION
+- 3 steps in diagonal layout:
+  Step 1: Upload Photo (camera icon)
+  Step 2: AI Scans Features (scan icon with rotating ring animation)
+  Step 3: Get Breed Profile (DNA/leaf icon)
+- Connected by a dashed curved SVG path
+
+### 6. STATS BAR
+- Animated counter on scroll into view:
+  "30+ Breeds Identified | 15 States Covered | 95%+ Accuracy | Cattle & Buffalo"
+
+### 7. FOOTER
+- Logo + tagline in Hindi: "भारतीय पशु पहचान प्रणाली"
+- Links: About, Breeds Database, API, Contact
+- "Made for Indian Farmers" with a small flag emoji
+
+---
+
+## BREED DATABASE (hardcode in JS — breeds.js)
+Include these breeds with data:
+
+CATTLE:
+1. Gir (Gujarat) - Dairy - High milk yield - Sacred/Commercial
+2. Sahiwal (Punjab) - Dairy - High fat milk
+3. Tharparkar (Rajasthan) - Dual Purpose - Drought hardy
+4. Red Sindhi (Sindh origin) - Dairy - Heat tolerant
+5. Kankrej (Gujarat) - Draft - Strong build
+6. Ongole (Andhra Pradesh) - Draft - Massive frame
+7. Hallikar (Karnataka) - Draft - Fast, agile
+18. Hariana (Haryana) - Dual Purpose
+9. Deoni (Maharashtra) - Dual Purpose
+10. Khillari (Maharashtra) - Draft - Compact
+11. Amrit Mahal (Karnataka) - Draft - War cattle
+12. Punganur (AP) - Dairy - World's smallest cattle - Endangered
+13. Vechur (Kerala) - Dairy - Smallest zebu - Endangered
+14. Kangayam (Tamil Nadu) - Draft
+15. Bargur (Tamil Nadu) - Draft - Hill breed
+
+BUFFALO:
+16. Murrah (Haryana) - Dairy - Highest milk yield buffalo
+17. Surti (Gujarat) - Dairy
+18. Jaffarabadi (Gujarat) - Dairy - Heaviest buffalo
+19. Bhadawari (UP) - Dairy - High fat content
+20. Nili-Ravi (Punjab) - Dairy
+21. Pandharpuri (Maharashtra) - Dairy
+22. Nagpuri (Maharashtra) - Draft
+23. Toda (Tamil Nadu) - Dairy - Tribal breed
+24. Mehsana (Gujarat) - Dairy - Murrah x Surti cross
+25. Marathwadi (Maharashtra) - Dual
+
+For each breed store: { id, name, hindiName, species, state, purpose, milkYield, bodyColor, hornType, size, conservationStatus, traits[], description }
+
+---
+
+## BACKEND API (server.js with Express)
+
+### POST /api/analyze
+- Accepts: multipart/form-data with image file
+- Converts image to base64
+- Calls Anthropic Claude API with this system prompt:
+
+SYSTEM: "You are an expert veterinarian and animal husbandry specialist with deep knowledge of all Indian cattle and buffalo breeds. When given an image of a bovine, analyze its physical features: body shape, coat color, horn shape/size, hump size (for cattle), ear shape, dewlap, leg structure, and facial features. Identify the most likely Indian breed. Return ONLY a JSON object with this exact structure:
+{
+  "breedName": "string",
+  "hindiName": "string", 
+  "species": "Cattle" or "Buffalo",
+  "confidence": number (0-100),
+  "originState": "string",
+  "purpose": "Dairy" or "Draft" or "Dual Purpose",
+  "keyFeatures": ["feature1", "feature2", "feature3"],
+  "milkYield": "string (e.g. 8-12 liters/day)",
+  "bodyColor": "string",
+  "hornType": "string",
+  "conservationStatus": "Common" or "Vulnerable" or "Endangered",
+  "description": "2-3 sentence description",
+  "alternateBreeds": ["breed1", "breed2"]
+}"
+
+USER: [image + "Identify this Indian cattle or buffalo breed"]
+
+- Parse Claude's JSON response
+- Return to frontend
+
+### GET /api/breeds
+- Returns full breeds database as JSON
+
+### GET /api/breeds/:id
+- Returns single breed details
+
+---
+
+## FRONTEND JS FEATURES (app.js)
+
+1. Drag & drop image upload with preview
+2. Fetch /api/analyze with FormData
+3. Animate result section sliding up
+4. Animated confidence arc (SVG circle stroke-dashoffset animation)
+5. Breed gallery with filter functionality
+6. Intersection Observer for stats counter animation
+7. Smooth scroll navigation
+8. Toast notifications (success/error) — slide in from top-right
+
+---
+
+## ANIMATIONS (CSS-only where possible)
+
+1. Scan line on upload zone: pseudo-element, top-to-bottom infinite loop, semi-transparent gold line
+2. Particle background: 20 tiny divs, random positions, subtle float keyframes
+3. Card hover: translateY(-8px) + box-shadow gold glow
+4. Result section: slideInUp keyframe
+5. Confidence arc: SVG circle animation with JS triggering CSS transition
+6. Marquee: CSS animation marquee for breed name ticker
+7. Loading spinner: rotating dashed circle in gold
+8. Page load: staggered fade-in for hero elements (animation-delay)
+
+---
+
+## MOBILE RESPONSIVE
+- Hamburger menu for mobile nav
+- Single column layout below 768px
+- Upload zone full width on mobile
+- Touch-friendly drag & drop fallback (click to upload)
+- Result cards stack vertically
+
+---
+
+## FILE STRUCTURE
+/
+├── server.js          (Express backend)
+├── package.json
+├── public/
+│   ├── index.html     (main page)
+│   ├── css/
+│   │   └── style.css  (all styles)
+│   ├── js/
+│   │   ├── app.js     (main logic)
+│   │   ├── breeds.js  (breed database)
+│   │   └── animations.js (scroll animations)
+│   └── assets/
+│       └── (breed placeholder SVGs)
+
+---
+
+## ENVIRONMENT VARIABLES
+ANTHROPIC_API_KEY=your_key_here
+
+---
+
+## package.json dependencies
+{
+  "express": "^4.18.2",
+  "multer": "^1.4.5",
+  "@anthropic-ai/sdk": "^0.20.0",
+  "dotenv": "^16.0.0"
+}
+
+---
+
+## SPECIAL UI DETAILS
+- The upload hexagon should have a subtle pulsing glow animation when empty
+- Show a "Scanning..." state with animated scan bars (3 horizontal bars flickering)
+- Breed name in results should typewriter-animate in
+- If confidence < 60%, show "Possible match" warning in amber
+- If confidence > 85%, show "High confidence" badge in green
+- Always show 2 alternate breed suggestions below main result
+- Add a "Share Result" button that copies a text summary to clipboard
+- Add bilingual labels (English + Hindi) throughout the UI

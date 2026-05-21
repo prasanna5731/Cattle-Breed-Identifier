@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "PashuDrishti"
+version = "1.0.0"
+id = "artifacts/pashu-drishti"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 21907
+
+[services.development]
+run = "pnpm --filter @workspace/pashu-drishti run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/pashu-drishti", "run", "build" ]
+publicDir = "artifacts/pashu-drishti/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "21907"
+BASE_PATH = "/"

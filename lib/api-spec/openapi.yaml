@@ -1,0 +1,284 @@
+openapi: 3.1.0
+info:
+  # Do not change the title, if the title changes, the import paths will be broken
+  title: Api
+  version: 0.1.0
+  description: PashuDrishti API — AI-powered Indian cattle & buffalo breed recognition
+servers:
+  - url: /api
+    description: Base API path
+tags:
+  - name: health
+    description: Health operations
+  - name: breeds
+    description: Breed database operations
+  - name: analyze
+    description: AI breed analysis
+paths:
+  /healthz:
+    get:
+      operationId: healthCheck
+      tags: [health]
+      summary: Health check
+      description: Returns server health status
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+
+  /breeds:
+    get:
+      operationId: listBreeds
+      tags: [breeds]
+      summary: List all breeds
+      description: Returns the full breed database
+      parameters:
+        - name: species
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [Cattle, Buffalo]
+        - name: purpose
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [Dairy, Draft, "Dual Purpose"]
+        - name: conservationStatus
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [Common, Vulnerable, Endangered]
+      responses:
+        "200":
+          description: List of breeds
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Breed"
+
+  /breeds/{id}:
+    get:
+      operationId: getBreed
+      tags: [breeds]
+      summary: Get single breed by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Breed details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Breed"
+        "404":
+          description: Breed not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /analyze:
+    post:
+      operationId: analyzeBreed
+      tags: [analyze]
+      summary: Analyze uploaded image to identify breed
+      description: Accepts multipart image, calls Claude vision API, returns breed identification
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/AnalyzeInput"
+      responses:
+        "200":
+          description: Breed analysis result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AnalysisResult"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /stats:
+    get:
+      operationId: getStats
+      tags: [breeds]
+      summary: Get database statistics
+      description: Returns counts and summary stats for the breed database
+      responses:
+        "200":
+          description: Stats summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Stats"
+
+components:
+  schemas:
+    HealthStatus:
+      type: object
+      properties:
+        status:
+          type: string
+      required:
+        - status
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+      required:
+        - error
+
+    Breed:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        hindiName:
+          type: string
+        species:
+          type: string
+          enum: [Cattle, Buffalo]
+        state:
+          type: string
+        purpose:
+          type: string
+          enum: [Dairy, Draft, "Dual Purpose"]
+        milkYield:
+          type: ["string", "null"]
+        bodyColor:
+          type: string
+        hornType:
+          type: string
+        size:
+          type: string
+        conservationStatus:
+          type: string
+          enum: [Common, Vulnerable, Endangered]
+        traits:
+          type: array
+          items:
+            type: string
+        description:
+          type: string
+      required:
+        - id
+        - name
+        - hindiName
+        - species
+        - state
+        - purpose
+        - bodyColor
+        - hornType
+        - size
+        - conservationStatus
+        - traits
+        - description
+
+    AnalyzeInput:
+      type: object
+      properties:
+        image:
+          type: string
+          format: binary
+      required:
+        - image
+
+    AnalysisResult:
+      type: object
+      properties:
+        breedName:
+          type: string
+        hindiName:
+          type: string
+        species:
+          type: string
+          enum: [Cattle, Buffalo]
+        confidence:
+          type: number
+        originState:
+          type: string
+        purpose:
+          type: string
+          enum: [Dairy, Draft, "Dual Purpose"]
+        keyFeatures:
+          type: array
+          items:
+            type: string
+        milkYield:
+          type: ["string", "null"]
+        bodyColor:
+          type: string
+        hornType:
+          type: string
+        conservationStatus:
+          type: string
+          enum: [Common, Vulnerable, Endangered]
+        description:
+          type: string
+        alternateBreeds:
+          type: array
+          items:
+            type: string
+      required:
+        - breedName
+        - hindiName
+        - species
+        - confidence
+        - originState
+        - purpose
+        - keyFeatures
+        - bodyColor
+        - hornType
+        - conservationStatus
+        - description
+        - alternateBreeds
+
+    Stats:
+      type: object
+      properties:
+        totalBreeds:
+          type: integer
+        cattleCount:
+          type: integer
+        buffaloCount:
+          type: integer
+        endangeredCount:
+          type: integer
+        statesCovered:
+          type: integer
+        accuracyRate:
+          type: string
+      required:
+        - totalBreeds
+        - cattleCount
+        - buffaloCount
+        - endangeredCount
+        - statesCovered
+        - accuracyRate
