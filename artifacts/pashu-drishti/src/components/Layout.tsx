@@ -107,7 +107,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-12">
             <div>
               <h2 className="font-display text-2xl font-bold text-primary mb-2">PashuDrishti</h2>
-              <p className="text-muted-foreground font-medium tracking-widest uppercase text-sm mb-4">भारतीय पशु पहचान प्रणाली</p>
+              <p className="text-muted-foreground font-medium tracking-widest uppercase text-xs mb-4">Indigenous Bovine Recognition System</p>
               <p className="text-muted-foreground text-sm max-w-sm leading-relaxed">
                 Empowering Indian farmers and veterinarians with AI to recognize, protect, and celebrate our indigenous bovine heritage.
               </p>

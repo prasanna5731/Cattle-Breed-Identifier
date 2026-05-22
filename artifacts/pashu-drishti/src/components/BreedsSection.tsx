@@ -69,7 +69,6 @@ export default function BreedsSection() {
                 <span className="font-serif text-6xl text-primary/30 opacity-50 absolute -right-4 -bottom-4 group-hover:scale-110 transition-transform">{String(b.name || '').charAt(0)}</span>
                 <div className="relative z-10 text-center">
                   <h3 className="font-display text-2xl font-bold text-foreground">{b.name ?? 'Unknown'}</h3>
-                  <p className="text-primary font-medium">{b.hindiName ?? ''}</p>
                 </div>
               </div>
               

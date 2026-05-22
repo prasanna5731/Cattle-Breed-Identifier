@@ -97,7 +97,7 @@ export default function HeroSection() {
       <div className="w-full mt-24 border-y border-primary/20 bg-background/50 backdrop-blur py-4 relative z-20">
         <div className="marquee-container">
           <div className="marquee-content flex gap-8 items-center text-primary/60 font-display tracking-widest text-sm uppercase whitespace-nowrap">
-            <span>Gir (गिर)</span> • <span>Sahiwal (साहीवाल)</span> • <span>Red Sindhi (लाल सिंधी)</span> • <span>Murrah (मुर्रा)</span> • <span>Tharparkar (थारपारकर)</span> • <span>Kankrej (कांकरेज)</span> • <span>Hariana (हरियाना)</span> • <span>Ongole (ओंगोल)</span> • <span>Deoni (देवनी)</span> • <span>Nili-Ravi (नीली-रावी)</span> • <span>Jafarabadi (जाफराबादी)</span> • <span>Gir (गिर)</span> • <span>Sahiwal (साहीवाल)</span> • <span>Red Sindhi (लाल सिंधी)</span> • <span>Murrah (मुर्रा)</span> • <span>Tharparkar (थारपारकर)</span>
+            <span>Gir</span> • <span>Sahiwal</span> • <span>Red Sindhi</span> • <span>Murrah</span> • <span>Tharparkar</span> • <span>Kankrej</span> • <span>Hariana</span> • <span>Ongole</span> • <span>Deoni</span> • <span>Nili-Ravi</span> • <span>Jafarabadi</span> • <span>Gir</span> • <span>Sahiwal</span> • <span>Red Sindhi</span> • <span>Murrah</span> • <span>Tharparkar</span>
           </div>
         </div>
       </div>

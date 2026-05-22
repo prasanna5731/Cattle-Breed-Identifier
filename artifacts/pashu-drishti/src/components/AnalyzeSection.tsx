@@ -55,7 +55,7 @@ export default function AnalyzeSection() {
 
   const copyResult = () => {
     if (!result) return;
-    const text = `PashuDrishti Analysis:\nBreed: ${result.breedName} (${result.hindiName})\nSpecies: ${result.species}\nConfidence: ${result.confidence}%\nPurpose: ${result.purpose}`;
+    const text = `PashuDrishti Analysis:\nBreed: ${result.breedName}\nSpecies: ${result.species}\nConfidence: ${result.confidence}%\nPurpose: ${result.purpose}`;
     navigator.clipboard.writeText(text).then(() => {
       setIsCopied(true);
       setTimeout(() => setIsCopied(false), 2000);
@@ -205,7 +205,6 @@ export default function AnalyzeSection() {
                       </span>
                     </div>
                     <h3 className="font-display text-4xl text-primary mb-1">{result.breedName}</h3>
-                    <p className="text-lg text-muted-foreground font-medium">{result.hindiName}</p>
                   </div>
 
                   <div className="grid grid-cols-2 gap-4 mb-8">
