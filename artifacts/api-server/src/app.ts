@@ -1,3 +1,4 @@
+import path from "path";
 import express, { type Express } from "express";
 import cors from "cors";
 import pinoHttp from "pino-http";
@@ -29,21 +30,23 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.get("/", (req, res) => {
-  res.json({
-    name: "PashuDrishti API Server",
-    status: "active",
-    message: "Indian Cattle & Buffalo Breed Recognition System API is running successfully.",
-    endpoints: {
-      health: "/api/healthz",
-      breeds: "/api/breeds",
-      stats: "/api/stats",
-      analyze: "/api/analyze (POST)"
+app.use("/api", router);
+
+// Serve frontend static assets in production
+const frontendPath = path.resolve(process.cwd(), "artifacts/pashu-drishti/dist/public");
+app.use(express.static(frontendPath));
+
+// Fallback all other GET requests to index.html for SPA routing
+app.get("*", (req, res, next) => {
+  if (req.path.startsWith("/api")) {
+    return next();
+  }
+  res.sendFile(path.join(frontendPath, "index.html"), (err) => {
+    if (err) {
+      next();
     }
   });
 });
-
-app.use("/api", router);
 
 // Custom 404 handler for unmatched routes
 app.use((req, res) => {
