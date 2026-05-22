@@ -37,7 +37,10 @@ const frontendPath = path.resolve(__dirname, "..", "..", "pashu-drishti", "dist"
 app.use(express.static(frontendPath));
 
 // Fallback all other GET requests to index.html for SPA routing
-app.get("*", (req, res, next) => {
+app.use((req, res, next) => {
+  if (req.method !== "GET") {
+    return next();
+  }
   if (req.path.startsWith("/api")) {
     return next();
   }
