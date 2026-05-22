@@ -33,7 +33,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/api", router);
 
 // Serve frontend static assets in production
-const frontendPath = path.resolve(process.cwd(), "artifacts/pashu-drishti/dist/public");
+const frontendPath = path.resolve(__dirname, "..", "..", "pashu-drishti", "dist", "public");
 app.use(express.static(frontendPath));
 
 // Fallback all other GET requests to index.html for SPA routing
